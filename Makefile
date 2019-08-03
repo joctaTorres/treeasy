@@ -19,11 +19,14 @@ isort:
 black:
 	black **/ --exclude */snapshots $(BLACK_OPTIONS)
 
+.PHONY: mypy
+mypy:
+	mypy **/*.py --ignore-missing-imports
+
 .PHONY: lint
 lint: ISORT_OPTIONS := --check-only
 lint: BLACK_OPTIONS := --check
-lint: autoflake isort black
-	mypy **/*.py --ignore-missing-imports
+lint: autoflake isort black mypy
 	flake8 ./treeasy
 
 .PHONY: format
