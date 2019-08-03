@@ -10,3 +10,7 @@ snapshots = Snapshot()
 snapshots['test_entropy 1'] = 0.9402859586706309
 
 snapshots['test_entropy 2'] = 1.9609640474436814
+
+snapshots['test_collection_entropy 1'] = 0.9402859586706309
+
+snapshots['test_collection_entropy 2'] = 1.5128876215181606
