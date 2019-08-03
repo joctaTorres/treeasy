@@ -1,7 +1,7 @@
 from typing import List
 from math import log2
 
-def collection_entropy(collection : List[int]):
+def collection_entropy(collection : List[int]) -> float:
     '''
         collection:     discrete target attribute count
                         e.g.1: [7, 9, 4]
@@ -11,7 +11,7 @@ def collection_entropy(collection : List[int]):
     return entropy([(target/collection_size) for target in collection])
 
 
-def entropy(probabilities : List[float], log=log2):
+def entropy(probabilities : List[float], log=log2) -> float:
     '''
         probabilities:  e.g.1: [(7/20), (9/20), (4/20)]
                         e.g.2: [(4/11), (7/11)]
