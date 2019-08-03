@@ -1,6 +1,6 @@
 .PHONY: test
 test:
-	pytest . $(PYTEST_OPTIONS)
+	pytest ./test $(PYTEST_OPTIONS)
 
 .PHONY: snapshot-update
 snapshot-update: PYTEST_OPTIONS := --snapshot-update
