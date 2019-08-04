@@ -1,6 +1,6 @@
 from unittest.mock import call, patch
 
-from treeasy.entropy import collection_entropy, entropy
+from treeasy.entropy import attribute_information_gain, collection_entropy, entropy
 
 
 def test_entropy(snapshot):
@@ -30,3 +30,8 @@ def test_collection_entropy_call(entropy, snapshot):
     entropy.assert_has_calls(
         [call([(9 / 14), (5 / 14)]), call([(7 / 20), (9 / 20), (4 / 20)])]
     )
+
+
+def test_attribute_information_gain(snapshot):
+    snapshot.assert_match(attribute_information_gain(0.940, 14, [[6, 2], [3, 3]]))
+    snapshot.assert_match(attribute_information_gain(0.940, 14, [[3, 4], [6, 1]]))
