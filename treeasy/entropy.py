@@ -31,6 +31,17 @@ def entropy(probabilities: List[float], log=log2) -> float:
     return entropy
 
 
+def target_collection_information_gain(
+    target_collection: List[int], attribute_subsets: List[List[int]]
+) -> float:
+    target_instance_size = sum(target_collection)
+    target_entropy = collection_entropy(target_collection)
+
+    return attribute_information_gain(
+        target_entropy, target_instance_size, attribute_subsets
+    )
+
+
 def attribute_information_gain(
     target_entropy: float, target_instance_size: int, atribute_subsets: List[List[int]]
 ):
