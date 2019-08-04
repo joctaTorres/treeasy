@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 pandas = "==0.25.0"
+anytree = "==2.6.0"
 
 [dev-packages]
 pytest = "==4.1.1"
