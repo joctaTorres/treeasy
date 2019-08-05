@@ -1,9 +1,18 @@
+from anytree import Node, RenderTree
 import pandas as pd
 
 from entropy import attribute_information_gain, collection_entropy
 
 
-def treeID3(examples, target_attribute, attributes):
+def treeID3(
+    examples,
+    target_attribute,
+    attributes,
+    target_attribute_values=None,
+    target_attribute_mode=None,
+    target_instance_size=None,
+    target_attribute_entropy=None,
+):
     """
         @params:
         examples: are the training examples.
@@ -12,14 +21,32 @@ def treeID3(examples, target_attribute, attributes):
         
         @returns: a decision tree that correctly classifies the given examples
     """
+    
+    if not target_attribute_values:
+        target_attribute_values = list(
+            get_column_values_count(examples[target_attribute])
+        )
 
-    target_attribute_values = get_column_values(examples[target_attribute])
-    target_instance_size = sum(target_attribute_values)
-    target_attribute_entropy = collection_entropy(target_attribute_values)
+    if not target_attribute_mode:
+        target_attribute_mode = get_column_values_count(examples[target_attribute]).idxmax()
+
+    if examples.empty:
+        return Node(target_attribute_mode)
+
+    if not target_instance_size:
+        target_instance_size = sum(target_attribute_values)
+
+    if not target_attribute_entropy:
+        target_attribute_entropy = collection_entropy(target_attribute_values)
 
     if target_attribute in attributes:
         attributes.remove(target_attribute)
-    
+
+    if len(target_attribute_values) == 1:
+        return Node(
+            get_column_values_count(examples[target_attribute]).idxmax()
+        )
+
     max_information_gain_attribute = get_max_information_gain_attribute(
         examples,
         attributes,
@@ -27,6 +54,27 @@ def treeID3(examples, target_attribute, attributes):
         target_attribute_entropy,
         target_instance_size,
     )
+
+    # import pdb; pdb.set_trace()
+    root = Node(max_information_gain_attribute)
+
+    children_branches = []
+    for value in examples[max_information_gain_attribute].unique():
+        examples_subset = get_attribute_value_dataframe(examples, max_information_gain_attribute, value)
+        children_branches.append(
+            treeID3(
+                examples_subset,
+                target_attribute,
+                attributes,
+                # target_attribute_values=target_attribute_values,
+                # target_instance_size=target_instance_size,
+                # target_attribute_entropy=target_attribute_entropy,
+                # target_attribute_mode=target_attribute_mode,
+            )
+        )
+
+    root.children = children_branches
+    return root
 
 
 def get_max_information_gain_attribute(
@@ -44,6 +92,7 @@ def get_max_information_gain_attribute(
         target_instance_size,
     )
     return max(attribute_gains, key=attribute_gains.get)
+
 
 def get_attribute_gains(
     examples,
@@ -71,7 +120,7 @@ def get_attribute_subset_values(examples, attribute, target_attribute):
     for value in examples[attribute].unique():
         value_subset_df = get_attribute_value_dataframe(examples, attribute, value)
         attribute_values_subset.append(
-            get_column_values(value_subset_df[target_attribute])
+            get_column_values_count(value_subset_df[target_attribute])
         )
 
     return attribute_values_subset
@@ -81,8 +130,8 @@ def get_attribute_value_dataframe(original_df, column, value):
     return original_df.loc[original_df[column] == value]
 
 
-def get_column_values(column):
-    return list(column.value_counts()) or 0
+def get_column_values_count(column):
+    return column.value_counts()
 
 
 def test_treeID3():
@@ -92,11 +141,8 @@ def test_treeID3():
     attributes = list(training_data.columns)
     target = "play"
 
-    treeID3(training_data, target, attributes)
-
-    import pdb
-
-    pdb.set_trace()
+    t = treeID3(training_data, target, attributes)
+    print(RenderTree(t))
 
 
 if __name__ == "__main__":
