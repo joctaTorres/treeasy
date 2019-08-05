@@ -17,6 +17,23 @@ def treeID3(examples, target_attribute, attributes):
     target_instance_size = sum(target_attribute_values)
     target_attribute_entropy = collection_entropy(target_attribute_values)
 
+    get_attribute_gains(
+        examples,
+        attributes,
+        target_attribute,
+        target_attribute_entropy,
+        target_instance_size,
+    )
+
+
+def get_attribute_gains(
+    examples,
+    attributes,
+    target_attribute,
+    target_attribute_entropy,
+    target_instance_size,
+):
+    attribute_gains = {}
     for attribute in attributes:
         attribute_subset_values = get_attribute_subset_values(
             examples, attribute, target_attribute
@@ -24,6 +41,10 @@ def treeID3(examples, target_attribute, attributes):
         information_gain = attribute_information_gain(
             target_attribute_entropy, target_instance_size, attribute_subset_values
         )
+
+        attribute_gains.update({attribute: information_gain})
+
+    return attribute_gains
 
 
 def get_attribute_subset_values(examples, attribute, target_attribute):
