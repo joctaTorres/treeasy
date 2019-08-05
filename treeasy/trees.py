@@ -17,7 +17,10 @@ def treeID3(examples, target_attribute, attributes):
     target_instance_size = sum(target_attribute_values)
     target_attribute_entropy = collection_entropy(target_attribute_values)
 
-    get_attribute_gains(
+    if target_attribute in attributes:
+        attributes.remove(target_attribute)
+    
+    max_information_gain_attribute = get_max_information_gain_attribute(
         examples,
         attributes,
         target_attribute,
@@ -25,6 +28,22 @@ def treeID3(examples, target_attribute, attributes):
         target_instance_size,
     )
 
+
+def get_max_information_gain_attribute(
+    examples,
+    attributes,
+    target_attribute,
+    target_attribute_entropy,
+    target_instance_size,
+):
+    attribute_gains = get_attribute_gains(
+        examples,
+        attributes,
+        target_attribute,
+        target_attribute_entropy,
+        target_instance_size,
+    )
+    return max(attribute_gains, key=attribute_gains.get)
 
 def get_attribute_gains(
     examples,
