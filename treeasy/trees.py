@@ -1,7 +1,7 @@
 import pandas as pd
-from anytree import Node, RenderTree
 
 from entropy import attribute_information_gain, collection_entropy
+from model import Tree
 
 
 def treeID3(examples, target_attribute, attributes):
@@ -20,7 +20,7 @@ def treeID3(examples, target_attribute, attributes):
         target_attribute_mode = get_column_values_count(
             examples[target_attribute]
         ).idxmax()
-        return Node(target_attribute_mode)
+        return Tree(target_attribute_mode)
 
     target_instance_size = sum(target_attribute_values)
 
@@ -30,7 +30,7 @@ def treeID3(examples, target_attribute, attributes):
         attributes.remove(target_attribute)
 
     if len(target_attribute_values) == 1:
-        return Node(get_column_values_count(examples[target_attribute]).idxmax())
+        return Tree(get_column_values_count(examples[target_attribute]).idxmax())
 
     max_information_gain_attribute = get_max_information_gain_attribute(
         examples,
@@ -40,16 +40,16 @@ def treeID3(examples, target_attribute, attributes):
         target_instance_size,
     )
 
-    root = Node(max_information_gain_attribute)
+    root = Tree(max_information_gain_attribute)
 
     children_branches = []
     for value in examples[max_information_gain_attribute].unique():
         examples_subset = get_attribute_value_dataframe(
             examples, max_information_gain_attribute, value
         )
-        children_branches.append(treeID3(examples_subset, target_attribute, attributes))
+        children_branches.append((value, treeID3(examples_subset, target_attribute, attributes)))
 
-    root.children = children_branches
+    root.set_children(children_branches)
     return root
 
 
@@ -118,7 +118,8 @@ def test_treeID3():
     target = "play"
 
     t = treeID3(training_data, target, attributes)
-    print(RenderTree(t))
+    from pprint import pprint
+    pprint(str(t))
 
 
 if __name__ == "__main__":
