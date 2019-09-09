@@ -118,8 +118,8 @@ def test_treeID3():
     target = "play"
 
     t = treeID3(training_data, target, attributes)
-    from pprint import pprint
-    pprint(str(t))
+    with open("result_play_tennis.json", "w") as result:
+        result.write(str(t))
 
 
 if __name__ == "__main__":
