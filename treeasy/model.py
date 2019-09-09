@@ -1,3 +1,5 @@
+import json
+
 class Tree:
     def __init__(self, root_name):
         self.root = root_name
@@ -6,12 +8,20 @@ class Tree:
     def set_children(self, children):
         self.children = children
     
-    def __str__(self):
-        string = f"({self.root})"
-        for child in self.children:
-            child_str = str(child[1])
-            string += f"\n\t| [{child[0]}] : {child_str}"
+    def get_tree_dict(self):
+        tree_dict = {
+            "node": self.root,
+        }
+
+        if len(self.children) > 0:
+            tree_dict.update(
+                { "values" : {v : cd.get_tree_dict() for v, cd in self.children } }
+            )
         
-        return string
+        return tree_dict
+    
+    def __str__(self):
+
+        return json.dumps(self.get_tree_dict())
     
 
