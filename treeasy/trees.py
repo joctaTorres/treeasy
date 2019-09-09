@@ -1,7 +1,7 @@
 import pandas as pd
 
-from entropy import attribute_information_gain, collection_entropy
-from model import Tree
+from treeasy.entropy import attribute_information_gain, collection_entropy
+from treeasy.types import Tree
 
 
 def treeID3(examples, target_attribute, attributes):
