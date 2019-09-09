@@ -47,7 +47,9 @@ def treeID3(examples, target_attribute, attributes):
         examples_subset = get_attribute_value_dataframe(
             examples, max_information_gain_attribute, value
         )
-        children_branches.append((value, treeID3(examples_subset, target_attribute, attributes)))
+        children_branches.append(
+            (value, treeID3(examples_subset, target_attribute, attributes))
+        )
 
     root.set_children(children_branches)
     return root
