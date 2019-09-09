@@ -1,5 +1,3 @@
-from unittest.mock import call, patch
-
 import pandas as pd
 
 from treeasy.trees import treeID3
