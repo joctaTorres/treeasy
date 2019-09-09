@@ -45,7 +45,7 @@ def target_collection_information_gain(
 def attribute_information_gain(
     target_entropy: float, target_instance_size: int, attribute_subsets: List[List[int]]
 ) -> float:
-    attribute_entropy = 0
+    attribute_entropy = 0.0
 
     for subset in attribute_subsets:
         subset_weigth = sum(subset) / target_instance_size

@@ -10,7 +10,6 @@ def treeID3(examples, target_attribute, attributes):
         examples: are the training examples.
         target_attribute: is the attribute whose value is to be predicted by the tree.
         attributes: is a list of other attributes that may be tested by the learned decision tree.
-        
         @returns: a decision tree that correctly classifies the given examples
     """
 
