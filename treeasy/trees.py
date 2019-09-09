@@ -1,6 +1,5 @@
 import pandas as pd
 from anytree import Node, RenderTree
-from anytree.exporter import DotExporter
 
 from entropy import attribute_information_gain, collection_entropy
 
@@ -120,7 +119,6 @@ def test_treeID3():
 
     t = treeID3(training_data, target, attributes)
     print(RenderTree(t))
-    DotExporter(t).to_picture("hi.png")
 
 
 if __name__ == "__main__":
