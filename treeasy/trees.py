@@ -1,17 +1,15 @@
 import pandas as pd
-from anytree import Node, RenderTree
-from anytree.exporter import DotExporter
 
-from entropy import attribute_information_gain, collection_entropy
+from treeasy.entropy import attribute_information_gain, collection_entropy
+from treeasy.types import Tree
 
 
-def treeID3(examples, target_attribute, attributes):
+def tree_id3(examples, target_attribute, attributes):
     """
         @params:
         examples: are the training examples.
         target_attribute: is the attribute whose value is to be predicted by the tree.
         attributes: is a list of other attributes that may be tested by the learned decision tree.
-        
         @returns: a decision tree that correctly classifies the given examples
     """
 
@@ -21,7 +19,7 @@ def treeID3(examples, target_attribute, attributes):
         target_attribute_mode = get_column_values_count(
             examples[target_attribute]
         ).idxmax()
-        return Node(target_attribute_mode)
+        return Tree(target_attribute_mode)
 
     target_instance_size = sum(target_attribute_values)
 
@@ -31,7 +29,7 @@ def treeID3(examples, target_attribute, attributes):
         attributes.remove(target_attribute)
 
     if len(target_attribute_values) == 1:
-        return Node(get_column_values_count(examples[target_attribute]).idxmax())
+        return Tree(get_column_values_count(examples[target_attribute]).idxmax())
 
     max_information_gain_attribute = get_max_information_gain_attribute(
         examples,
@@ -41,16 +39,18 @@ def treeID3(examples, target_attribute, attributes):
         target_instance_size,
     )
 
-    root = Node(max_information_gain_attribute)
+    root = Tree(max_information_gain_attribute)
 
     children_branches = []
     for value in examples[max_information_gain_attribute].unique():
         examples_subset = get_attribute_value_dataframe(
             examples, max_information_gain_attribute, value
         )
-        children_branches.append(treeID3(examples_subset, target_attribute, attributes))
+        children_branches.append(
+            (value, tree_id3(examples_subset, target_attribute, attributes))
+        )
 
-    root.children = children_branches
+    root.set_children(children_branches)
     return root
 
 
@@ -111,17 +111,17 @@ def get_column_values_count(column):
     return column.value_counts()
 
 
-def test_treeID3():
+def test_tree_id3():
     training_data = pd.read_csv("./datasets/tennis.csv")
     training_data.drop(["day"], axis=1, inplace=True)
 
     attributes = list(training_data.columns)
     target = "play"
 
-    t = treeID3(training_data, target, attributes)
-    print(RenderTree(t))
-    DotExporter(t).to_picture("hi.png")
+    t = tree_id3(training_data, target, attributes)
+    with open("result_play_tennis.json", "w") as result:
+        result.write(str(t))
 
 
 if __name__ == "__main__":
-    test_treeID3()
+    test_tree_id3()
