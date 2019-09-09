@@ -1,6 +1,6 @@
 import pandas as pd
 
-from treeasy.trees import treeID3
+from treeasy.trees import tree_id3
 
 
 def test_tree_id3(snapshot):
@@ -10,5 +10,5 @@ def test_tree_id3(snapshot):
     attributes = list(training_data.columns)
     target = "play"
 
-    expected_tree = treeID3(training_data, target, attributes)
+    expected_tree = tree_id3(training_data, target, attributes)
     snapshot.assert_match(str(expected_tree))
