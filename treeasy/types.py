@@ -19,6 +19,6 @@ class Tree:
 
         return tree_dict
 
-    def __str__(self):
+    def __repr__(self):
 
         return json.dumps(self.get_tree_dict())
