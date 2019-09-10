@@ -13,24 +13,31 @@ def tree_id3(examples, target_attribute, attributes):
         @returns: a decision tree that correctly classifies the given examples
     """
 
+    # get counts of target attributes. e.g.: [9, 5]
     target_attribute_values = list(get_column_values_count(examples[target_attribute]))
 
+    # get total of instances
+    target_instance_size = sum(target_attribute_values)
+
+    # if all attribute have been tested.. return most common target
     if len(attributes) == 0:
         target_attribute_mode = get_column_values_count(
             examples[target_attribute]
         ).idxmax()
         return Tree(target_attribute_mode)
 
-    target_instance_size = sum(target_attribute_values)
 
+    # collection S entropy:
     target_attribute_entropy = collection_entropy(target_attribute_values)
 
     if target_attribute in attributes:
         attributes.remove(target_attribute)
 
+    # if theres only one attribute create a leaf node
     if len(target_attribute_values) == 1:
         return Tree(get_column_values_count(examples[target_attribute]).idxmax())
 
+    # find the attribute with the highest information gain
     max_information_gain_attribute = get_max_information_gain_attribute(
         examples,
         attributes,
@@ -39,8 +46,10 @@ def tree_id3(examples, target_attribute, attributes):
         target_instance_size,
     )
 
+    # create a node for it
     root = Tree(max_information_gain_attribute)
 
+    #  for each possible value of the attribute (max gain attribute), run the algorithm for its subset
     children_branches = []
     for value in examples[max_information_gain_attribute].unique():
         examples_subset = get_attribute_value_dataframe(
@@ -113,7 +122,7 @@ def get_column_values_count(column):
     return column.value_counts()
 
 
-def test_tree_id3():
+def test_tree_id3_tennis():
     training_data = pd.read_csv("./datasets/tennis.csv")
     training_data.drop(["day"], axis=1, inplace=True)
 
@@ -148,4 +157,4 @@ def test_tree_id3_iris():
         result.write(str(t))
 
 if __name__ == "__main__":
-    test_tree_id3_iris()
+    test_tree_id3_tennis()
