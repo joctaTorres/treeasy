@@ -15,7 +15,7 @@ def tree_id3(examples, target_attribute, attributes):
 
     target_attribute_values = list(get_column_values_count(examples[target_attribute]))
 
-    if examples.empty:
+    if len(attributes) == 0:
         target_attribute_mode = get_column_values_count(
             examples[target_attribute]
         ).idxmax()
@@ -46,6 +46,8 @@ def tree_id3(examples, target_attribute, attributes):
         examples_subset = get_attribute_value_dataframe(
             examples, max_information_gain_attribute, value
         )
+
+        if max_information_gain_attribute in attributes : attributes.remove(max_information_gain_attribute) 
         children_branches.append(
             (value, tree_id3(examples_subset, target_attribute, attributes))
         )
@@ -123,5 +125,27 @@ def test_tree_id3():
         result.write(str(t))
 
 
+def test_tree_id3_cars():
+    training_data = pd.read_csv("./datasets/cars.csv")
+    training_data.drop(["car"], axis=1, inplace=True)
+
+    attributes = list(training_data.columns)
+    target = "buying"
+
+    t = tree_id3(training_data, target, attributes)
+    with open("result_cars.json", "w") as result:
+        result.write(str(t))
+
+
+def test_tree_id3_iris():
+    training_data = pd.read_csv("./datasets/iris.csv")
+
+    attributes = list(training_data.columns)
+    target = "variety"
+
+    t = tree_id3(training_data, target, attributes)
+    with open("result_iris.json", "w") as result:
+        result.write(str(t))
+
 if __name__ == "__main__":
-    test_tree_id3()
+    test_tree_id3_iris()
