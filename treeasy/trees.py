@@ -12,13 +12,6 @@ def tree_id3(examples, target_attribute, attributes):
         attributes: is a list of other attributes that may be tested by the learned decision tree.
         @returns: a decision tree that correctly classifies the given examples
     """
-
-    # get counts of target attributes. e.g.: [9, 5]
-    target_attribute_values = list(get_column_values_count(examples[target_attribute]))
-
-    # get total of instances
-    target_instance_size = sum(target_attribute_values)
-
     # if all attribute have been tested.. return most common target
     if len(attributes) == 0:
         target_attribute_mode = get_column_values_count(
@@ -26,6 +19,8 @@ def tree_id3(examples, target_attribute, attributes):
         ).idxmax()
         return Tree(target_attribute_mode)
 
+    # get counts of target attributes. e.g.: [9, 5]
+    target_attribute_values = list(get_column_values_count(examples[target_attribute]))
 
     # collection S entropy:
     target_attribute_entropy = collection_entropy(target_attribute_values)
@@ -36,6 +31,9 @@ def tree_id3(examples, target_attribute, attributes):
     # if theres only one attribute create a leaf node
     if len(target_attribute_values) == 1:
         return Tree(get_column_values_count(examples[target_attribute]).idxmax())
+
+    # get total of instances
+    target_instance_size = sum(target_attribute_values)
 
     # find the attribute with the highest information gain
     max_information_gain_attribute = get_max_information_gain_attribute(
@@ -56,7 +54,8 @@ def tree_id3(examples, target_attribute, attributes):
             examples, max_information_gain_attribute, value
         )
 
-        if max_information_gain_attribute in attributes : attributes.remove(max_information_gain_attribute) 
+        if max_information_gain_attribute in attributes:
+            attributes.remove(max_information_gain_attribute)
         children_branches.append(
             (value, tree_id3(examples_subset, target_attribute, attributes))
         )
@@ -155,6 +154,7 @@ def test_tree_id3_iris():
     t = tree_id3(training_data, target, attributes)
     with open("result_iris.json", "w") as result:
         result.write(str(t))
+
 
 if __name__ == "__main__":
     test_tree_id3_tennis()
